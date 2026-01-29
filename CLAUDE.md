@@ -51,3 +51,23 @@ This is a TypeScript library implementing a task management system with priority
 
 - `@kevjava/task-parser` (local: `../task-parser/`) - Task parsing library, provides `TaskScheduler` interface
 - `churn` (local: `../churn/`) - CLI consumer of this library
+
+## Commit Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+
+Format: `<type>[optional scope]: <description>`
+
+Types:
+- `feat`: New feature (correlates with MINOR in semver)
+- `fix`: Bug fix (correlates with PATCH in semver)
+- `docs`: Documentation only
+- `style`: Code style (formatting, semicolons, etc.)
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvement
+- `test`: Adding or correcting tests
+- `chore`: Maintenance tasks
+- `build`: Build system or external dependencies
+- `ci`: CI configuration
+
+Breaking changes: Add `!` before the colon (e.g., `feat!: remove deprecated API`) or include `BREAKING CHANGE:` in the footer.
