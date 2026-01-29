@@ -1,0 +1,41 @@
+{
+  "name": "@kevjava/churn-core",
+  "version": "1.0.0",
+  "description": "Core library for churn: priority curves, recurrence, and daily planning",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "task",
+    "todo",
+    "priority",
+    "curves",
+    "recurrence",
+    "scheduling"
+  ],
+  "author": "Kevin",
+  "license": "MIT",
+  "dependencies": {
+    "@kevjava/task-parser": "file:../task-parser",
+    "better-sqlite3": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ]
+}
