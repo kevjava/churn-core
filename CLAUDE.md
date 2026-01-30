@@ -71,3 +71,14 @@ Types:
 - `ci`: CI configuration
 
 Breaking changes: Add `!` before the colon (e.g., `feat!: remove deprecated API`) or include `BREAKING CHANGE:` in the footer.
+
+## Git Workflow
+
+Always use feature branches and pull requests for changes:
+
+1. Create a feature branch from the main branch
+2. Make changes and commit with conventional commit messages
+3. Push the branch and create a pull request
+4. Merge via PR after review
+
+Never commit directly to the main branch.
