@@ -347,6 +347,72 @@ describe('TaskService', () => {
         -3
       );
     });
+
+    test('recurring task defaults to accumulator curve', async () => {
+      const task = await service.create({
+        title: 'Weekly recurring',
+        recurrence_pattern: {
+          mode: RecurrenceMode.CALENDAR,
+          type: RecurrenceType.WEEKLY,
+        },
+      });
+
+      expect(task.curve_config.type).toBe(CurveType.ACCUMULATOR);
+      expect(task.curve_config.recurrence).toBeDefined();
+      expect(task.curve_config.recurrence?.type).toBe(RecurrenceType.WEEKLY);
+    });
+
+    test('explicit curve type is respected for recurring task', async () => {
+      const task = await service.create({
+        title: 'Weekly with linear curve',
+        recurrence_pattern: {
+          mode: RecurrenceMode.COMPLETION,
+          type: RecurrenceType.WEEKLY,
+        },
+        curve_config: {
+          type: CurveType.LINEAR,
+        },
+      });
+
+      expect(task.curve_config.type).toBe(CurveType.LINEAR);
+    });
+
+    test('non-recurring task defaults to linear curve', async () => {
+      const task = await service.create({
+        title: 'One-time task',
+      });
+
+      expect(task.curve_config.type).toBe(CurveType.LINEAR);
+    });
+
+    test('daily recurrence uses accumulator with correct pattern', async () => {
+      const task = await service.create({
+        title: 'Daily task',
+        recurrence_pattern: {
+          mode: RecurrenceMode.CALENDAR,
+          type: RecurrenceType.DAILY,
+        },
+      });
+
+      expect(task.curve_config.type).toBe(CurveType.ACCUMULATOR);
+      expect(task.curve_config.recurrence?.type).toBe(RecurrenceType.DAILY);
+    });
+
+    test('interval recurrence uses accumulator with custom interval', async () => {
+      const task = await service.create({
+        title: 'Every 3 days',
+        recurrence_pattern: {
+          mode: RecurrenceMode.COMPLETION,
+          type: RecurrenceType.INTERVAL,
+          interval: 3,
+          unit: 'days',
+        },
+      });
+
+      expect(task.curve_config.type).toBe(CurveType.ACCUMULATOR);
+      expect(task.curve_config.recurrence?.interval).toBe(3);
+      expect(task.curve_config.recurrence?.unit).toBe('days');
+    });
   });
 
   describe('Priority', () => {
