@@ -156,7 +156,7 @@ export class Database {
 
   async insertTask(input: CreateTaskInput): Promise<number> {
     const now = new Date().toISOString();
-    const curveConfig = this.buildCurveConfig(input.curve_config);
+    const curveConfig = this.buildCurveConfig(input.curve_config, input.recurrence_pattern);
 
     const stmt = this.db.prepare(`
       INSERT INTO tasks (
@@ -310,7 +310,7 @@ export class Database {
 
     if (updates.curve_config !== undefined) {
       fields.push('curve_config = ?');
-      params.push(JSON.stringify(this.buildCurveConfig(updates.curve_config)));
+      params.push(JSON.stringify(this.buildCurveConfig(updates.curve_config, updates.recurrence_pattern)));
     }
 
     if (updates.status !== undefined) {
@@ -713,16 +713,37 @@ export class Database {
 
   // ===== PRIVATE HELPERS =====
 
-  private buildCurveConfig(partial?: Partial<CurveConfig>): CurveConfig {
+  private buildCurveConfig(
+    partial?: Partial<CurveConfig>,
+    recurrencePattern?: RecurrencePattern
+  ): CurveConfig {
     const now = new Date();
     const defaultDeadline = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-    return {
-      type: partial?.type ?? CurveType.LINEAR,
+    // Auto-default to ACCUMULATOR for recurring tasks (if no explicit type specified)
+    const hasExplicitType = partial?.type !== undefined;
+    const defaultType =
+      !hasExplicitType && recurrencePattern
+        ? CurveType.ACCUMULATOR
+        : CurveType.LINEAR;
+
+    const config: CurveConfig = {
+      type: partial?.type ?? defaultType,
       start_date: partial?.start_date ?? now,
       deadline: partial?.deadline ?? defaultDeadline,
       ...partial,
     };
+
+    // Ensure ACCUMULATOR curves have recurrence pattern
+    if (
+      config.type === CurveType.ACCUMULATOR &&
+      !config.recurrence &&
+      recurrencePattern
+    ) {
+      config.recurrence = recurrencePattern;
+    }
+
+    return config;
   }
 
   private rowToTask(row: TaskRow): Task {
